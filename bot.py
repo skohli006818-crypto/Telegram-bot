@@ -11,6 +11,38 @@ bot = Bot(token=TOKEN)
 
 def get_data():
     try:
+        url = "https://api.binance.com/api/v3/klines"
+        params = {
+            "symbol": "BTCUSDT",
+            "interval": "1m",
+            "limit": 100
+        }
+
+        response = requests.get(url, params=params, timeout=10)
+
+        if response.status_code != 200:
+            print("API Status Error:", response.status_code)
+            return None
+
+        data = response.json()
+
+        if not data or isinstance(data, dict):
+            print("No data from API")
+            return None
+
+        df = pd.DataFrame(data)
+        df = df.iloc[:, :6]
+
+        df.columns = ["time", "open", "high", "low", "close", "volume"]
+
+        df["close"] = df["close"].astype(float)
+
+        return df
+
+    except Exception as e:
+        print("API Error:", e)
+        return None
+    try:
         url = "https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1m&limit=100"
         data = requests.get(url).json()
 
