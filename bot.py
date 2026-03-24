@@ -4,8 +4,8 @@ import requests
 import pandas as pd
 from telegram import Bot
 
-TOKEN = os.getenv("8719400693:AAFbw8e0jrunWL9pY10ZKQVUaFcNBATq-u8")
-CHAT_ID = os.getenv("7606599262")
+TOKEN = os.getenv("BOT_TOKEN")
+CHAT_ID = os.getenv("CHAT_ID")
 
 bot = Bot(token=TOKEN)
 
