@@ -50,8 +50,7 @@ def add_rsi(df):
 
 
 def generate_signal(df):
-    if df is None or len(df) < 20:
-        return None
+    return "TEST SIGNAL"
 
     last_rsi = df["rsi"].iloc[-1]
 
