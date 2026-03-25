@@ -93,7 +93,6 @@ async def signal(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text("❌ No strong signal right now")
 
 # ===== AUTO SIGNAL LOOP =====
-async def auto_signal(context: ContextTypes.DEFAULT_TYPE):
     sig = get_signal()
     if sig:
         # Alert before 3 min
@@ -111,7 +110,6 @@ def main():
     app.add_handler(CommandHandler("signal", signal))
 
     # Every 5 min check
-    app.job_queue.run_repeating(auto_signal, interval=300, first=10)
 
     print("🔥 PRO BOT RUNNING...")
     app.run_polling()
