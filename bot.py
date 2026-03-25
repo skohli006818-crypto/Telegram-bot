@@ -39,10 +39,14 @@ def get_signal():
     df['RSI'] = 100 - (100 / (1 + rs))
 
     last = df.iloc[-1]
+    prev = df.iloc[-2]
 
-    price = last['Close']
-    ema = last['EMA']
-    rsi = last['RSI']
+    price = float(last['Close'])
+    ema = float(last['EMA'])
+    rsi = float(last['RSI'])
+
+    prev_close = float(prev['Close'])
+    prev_open = float(prev['Open'])
 
     # Support / Resistance
     support = df['Low'].rolling(20).min().iloc[-1]
@@ -53,13 +57,13 @@ def get_signal():
 
     signal = None
 
-    # BUY
-    if price > ema and rsi < 35 and prev['Close'] < prev['Open']:
-        signal = "BUY"
+    #BUY
+    if price > ema and rsi < 35 and prev_close < prev_open:
+    signal = "BUY"
 
-    # SELL
-    elif price < ema and rsi > 65 and prev['Close'] > prev['Open']:
-        signal = "SELL"
+    #SELL
+    elif price < ema and rsi > 65 and prev_close > prev_open:
+    signal = "SELL"
 
     if not signal:
         return None
