@@ -1,6 +1,7 @@
 import logging
 import random
 from datetime import datetime, timedelta
+import pytz
 
 from telegram import Update
 from telegram.ext import Application, CommandHandler, ContextTypes
@@ -85,7 +86,8 @@ async def signal(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text("❌ No strong signal")
         return
 
-    now = datetime.now()
+    ist = pytz.timezone('Asia/Kolkata')
+    now = datetime.now(ist)
     entry = now.strftime("%H:%M:%S")
     exit_time = (now + timedelta(minutes=1)).strftime("%H:%M:%S")
 
