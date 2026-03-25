@@ -22,16 +22,12 @@ def get_data():
     return df
 
 # ===== SIGNAL LOGIC =====
-def get_signal():
-    df = get_data()
+def get_signal(symbol):
+    df = yf.download(symbol, period="1d", interval="1m")
+    df.dropna(inplace=True)
 
-    if df is None or len(df) < 50:
-        return "NO SIGNAL"
-
-    # EMA
     df['EMA'] = df['Close'].ewm(span=20).mean()
 
-    # RSI
     delta = df['Close'].diff()
     gain = delta.clip(lower=0).rolling(14).mean()
     loss = -delta.clip(upper=0).rolling(14).mean()
@@ -45,20 +41,33 @@ def get_signal():
     ema = float(last['EMA'])
     rsi = float(last['RSI'])
 
-    prev_close = float(prev['Close'])
     prev_open = float(prev['Open'])
+    prev_close = float(prev['Close'])
 
-    signal = "NO SIGNAL"
+    buy_score = 0
+    sell_score = 0
 
-    # BUY
-    if price > ema and rsi < 35 and prev_close > prev_open:
-        signal = "BUY"
+    if price > ema:
+        buy_score += 1
+    else:
+        sell_score += 1
 
-    # SELL
-    elif price < ema and rsi > 65 and prev_close < prev_open:
-        signal = "SELL"
+    if rsi < 45:
+        buy_score += 1
+    elif rsi > 55:
+        sell_score += 1
 
-    return signal
+    if prev_close > prev_open:
+        buy_score += 1
+    elif prev_close < prev_open:
+        sell_score += 1
+
+    if buy_score >= 2:
+        return "BUY"
+    elif sell_score >= 2:
+        return "SELL"
+    else:
+        return None
 
 # ===== FORMAT =====
 def format_signal(sig):
@@ -89,8 +98,26 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
 async def signal(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    sig = get_signal()
-    msg = format_signal(sig)
+    pairs = {
+        "EUR/USD": "EURUSD=X",
+        "GBP/USD": "GBPUSD=X",
+        "USD/JPY": "JPY=X",
+        "AUD/USD": "AUDUSD=X"
+    }
+
+    msg = "🔥 PRO SIGNAL\n\n"
+    found = False
+
+    for name, symbol in pairs.items():
+        sig = get_signal(symbol)
+
+        if sig:
+            found = True
+            msg += f"{name} → {sig}\n"
+
+    if not found:
+        msg += "❌ No strong signal"
+
     await update.message.reply_text(msg)
 
 # ===== MAIN =====
