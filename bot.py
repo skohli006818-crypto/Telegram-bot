@@ -88,8 +88,12 @@ async def signal(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     ist = pytz.timezone('Asia/Kolkata')
     now = datetime.now(ist)
-    entry = now.strftime("%H:%M:%S")
-    exit_time = (now + timedelta(minutes=1)).strftime("%H:%M:%S")
+
+    entry_time = now + timedelta(minutes=2)
+    exit_time = entry_time + timedelta(minutes=1)
+
+    entry = entry_time.strftime("%H:%M:%S")
+    exit_time = exit_time.strftime("%H:%M:%S")
 
     msg = f"""
 🔥 PRO SIGNAL
