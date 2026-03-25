@@ -135,5 +135,5 @@ async def main():
 
 # ================= RUN =================
 if __name__ == "__main__":
-    import asyncio
-    asyncio.run(main())
+    print("🔥 PRO BOT RUNNING...")
+    app.run_polling()
