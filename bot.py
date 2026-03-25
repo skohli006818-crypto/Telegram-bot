@@ -57,16 +57,14 @@ def get_signal():
 
     signal = None
 
-    #BUY
     if price > ema and rsi < 35 and prev_close < prev_open:
     signal = "BUY"
 
-    #SELL
     elif price < ema and rsi > 65 and prev_close > prev_open:
     signal = "SELL"
 
-    if not signal:
-        return None
+    else:
+    signal = "NO SIGNAL"
 
     return {
         "signal": signal,
