@@ -89,6 +89,15 @@ async def signal(update: Update, context: ContextTypes.DEFAULT_TYPE):
     sig = get_signal()
     if sig:
         await update.message.reply_text(format_signal(sig))
+        async def auto_loop(app):
+    while True:
+        sig = get_signal()
+        if sig:
+            await app.bot.send_message(chat_id=CHAT_ID, text="⚠️ Signal in 3 min...")
+            await asyncio.sleep(180)
+            await app.bot.send_message(chat_id=CHAT_ID, text=format_signal(sig))
+
+        await asyncio.sleep(300)
     else:
         await update.message.reply_text("❌ No strong signal right now")
 
@@ -109,10 +118,13 @@ def main():
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("signal", signal))
 
-    # Every 5 min check
-
     print("🔥 PRO BOT RUNNING...")
-    app.run_polling()
+
+    async def run():
+        asyncio.create_task(auto_loop(app))
+        await app.run_polling()
+
+    asyncio.run(run())
 
 if __name__ == "__main__":
     main()
